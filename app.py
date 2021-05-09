@@ -38,7 +38,8 @@ def upload_file():
         # check if the post request has the file part
         if (request.form['file']):
             filename = 'web.png'
-            request.form['file'].save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            request.form['file'].save(os.path.join(
+                app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
         if 'file' not in request.files:
             flash('No file part')
@@ -52,8 +53,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = 'image.png'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # result = fas.run_test(detector, "./static/images/image.png")
-            result =.6
+            result = fas.run_test(detector, "./static/images/image.png")
             if (result >= .5):
                 flag = "Real"
                 color = "green"
@@ -72,8 +72,7 @@ def uploaded_file(flag, color):
 
 @app.route('/web_result', methods=['GET', 'POST'])
 def web_result():
-    # result = fas.run_test(detector, "./static/images/image.png")
-    result =.6
+    result = fas.run_test(detector, "./static/images/image.png")
     if (result >= .5):
         flag = "Real"
         color = "green"
@@ -82,7 +81,8 @@ def web_result():
         color = "red"
     print(flag, color, "redirecting")
     return redirect(url_for('uploaded_file',
-                                    flag=flag, color=color))
+                            flag=flag, color=color))
+
 
 @app.route('/web', methods=['GET', 'POST'])
 def web():
@@ -90,7 +90,7 @@ def web():
         i = request.files['image']  # get the image
         f = "image.png"
         i.save('%s/%s' % ("./static/images/", f))
-        
+
     # show the form, it wasn't submitted
     return render_template('web.html')
 
