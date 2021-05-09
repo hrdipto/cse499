@@ -10,19 +10,19 @@ import numpy as np
 logging.basicConfig(level=logging.INFO)
 
 
-def run_test(image):
+def run_test(detector, image):
     """
     In this function we create the detector instance. And evaluate the wall time for performing CelebASpoofDetector.
     """
 
-    # initialize the detector
-    logging.info("Initializing detector.")
-    try:
-        detector = CelebASpoofDetector()
-    except:
-        # send errors to the eval frontend
-        raise
-    logging.info("Detector initialized.")
+    # # initialize the detector
+    # logging.info("Initializing detector.")
+    # try:
+    #     detector = CelebASpoofDetector()
+    # except:
+    #     # send errors to the eval frontend
+    #     raise
+    # logging.info("Detector initialized.")
 
     # run the images one-by-one and get runtime
 
