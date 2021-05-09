@@ -1,6 +1,6 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory
-# from tsn_predict import TSNPredictor as CelebASpoofDetector
+from tsn_predict import TSNPredictor as CelebASpoofDetector
 
 from werkzeug.utils import secure_filename
 import model
@@ -10,7 +10,7 @@ import fas
 UPLOAD_FOLDER = './static/images/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# detector = CelebASpoofDetector()
+detector = CelebASpoofDetector()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
