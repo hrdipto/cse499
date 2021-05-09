@@ -1,6 +1,6 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory
-from tsn_predict import TSNPredictor as CelebASpoofDetector
+# from tsn_predict import TSNPredictor as CelebASpoofDetector
 
 from werkzeug.utils import secure_filename
 import model
@@ -10,7 +10,7 @@ import fas
 UPLOAD_FOLDER = './static/images/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-detector = CelebASpoofDetector()
+# detector = CelebASpoofDetector()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -36,6 +36,10 @@ def add_header(response):
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
+        if (request.form['file']):
+            filename = 'web.png'
+            request.form['file'].save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(request.url)
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -48,7 +52,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = 'image.png'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            result = fas.run_test(detector, "./static/images/image.png")
+            # result = fas.run_test(detector, "./static/images/image.png")
+            result =.6
             if (result >= .5):
                 flag = "Real"
                 color = "green"
@@ -60,9 +65,52 @@ def upload_file():
     return render_template("index.html")
 
 
-@app.route('/result/<flag>/<color>', methods=['GET'])
+@app.route('/result/<flag>/<color>', methods=['GET', 'POST'])
 def uploaded_file(flag, color):
     return render_template("result1.html", flag=flag, color=color)
+
+
+@app.route('/web_result', methods=['GET', 'POST'])
+def web_result():
+    # result = fas.run_test(detector, "./static/images/image.png")
+    result =.6
+    if (result >= .5):
+        flag = "Real"
+        color = "green"
+    else:
+        flag = "Fake"
+        color = "red"
+    print(flag, color, "redirecting")
+    return redirect(url_for('uploaded_file',
+                                    flag=flag, color=color))
+
+@app.route('/web', methods=['GET', 'POST'])
+def web():
+    if request.method == 'POST':
+        i = request.files['image']  # get the image
+        f = "image.png"
+        i.save('%s/%s' % ("./static/images/", f))
+        
+    # show the form, it wasn't submitted
+    return render_template('web.html')
+
+# # save the image as a picture
+# @app.route('/image', methods=['GET', 'POST'])
+# def image():
+
+#     i = request.files['image']  # get the image
+#     f = "image.png"
+#     i.save('%s/%s' % ("./upload/", f))
+#     # result = fas.run_test(detector, "./static/images/image.png")
+#     result =.6
+#     if (result >= .5):
+#         flag = "Real"
+#         color = "green"
+#     else:
+#         flag = "Fake"
+#         color = "red"
+#     print(flag, color, "redirecting")
+#     return render_template("image.html", flag=flag)
 
 # @app.route("/sub", methods = ["POST"])
 # def submit():

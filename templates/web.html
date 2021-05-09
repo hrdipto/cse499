@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Post an Image test</title>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <style>
+    /* mirror the image */
+    video,
+    canvas {
+      transform: scale(-1, 1); /*For Firefox (& IE) */
+      -webkit-transform: scale(-1, 1); /*for Chrome & Opera (& Safari) */
+      height: 450px;
+      width: 450px;
+    }
+    a {
+      text-align: center;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+          <video id="myVideo" autoplay></video>
+        </div>
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+          <a href="/web_result">Upload image</a>
+        </div>
+    </div>
+
+    <script>
+      let v = document.getElementById("myVideo");
+
+      //create a canvas to grab an image for upload
+      let imageCanvas = document.createElement("canvas");
+      let imageCtx = imageCanvas.getContext("2d");
+
+      //Add file blob to a form and post
+      function postFile(file) {
+        let formdata = new FormData();
+        formdata.append("image", file);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/web", true);
+        xhr.onload = function () {
+          if (this.status === 200) console.log(this.response);
+          else console.error(xhr);
+        };
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.send(formdata);
+      }
+
+      //Get the image from the canvas
+      function sendImagefromCanvas() {
+        //Make sure the canvas is set to the current video size
+        imageCanvas.width = v.videoWidth;
+        imageCanvas.height = v.videoHeight;
+
+        imageCtx.drawImage(v, 0, 0, v.videoWidth, v.videoHeight);
+
+        //Convert the canvas to blob and post the file
+        imageCanvas.toBlob(postFile, "image/jpeg");
+      }
+
+      //Take a picture on click
+      v.onclick = function () {
+        console.log("click");
+        sendImagefromCanvas();
+      };
+
+      window.onload = function () {
+        //Get camera video
+        navigator.mediaDevices
+          .getUserMedia({ video: { width: 1280, height: 720 }, audio: false })
+          .then((stream) => {
+            v.srcObject = stream;
+          })
+          .catch((err) => {
+            console.log("navigator.getUserMedia error: ", err);
+          });
+      };
+    </script>
+  </body>
+</html>
