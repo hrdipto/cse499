@@ -36,20 +36,20 @@ def add_header(response):
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
-        if (request.form['file']):
-            filename = 'web.png'
-            request.form['file'].save(os.path.join(
-                app.config['UPLOAD_FOLDER'], filename))
-            return redirect(request.url)
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+        # if (request.files['file']):
+        #     filename = 'web.png'
+        #     request.files['file'].save(os.path.join(
+        #         app.config['UPLOAD_FOLDER'], filename))
+        #     return redirect(request.url)
+        # if 'file' not in request.files:
+        #     flash('No file part')
+        #     return redirect(request.url)
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+        # if file.filename == '':
+        #     flash('No selected file')
+        #     return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = 'image.png'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -121,4 +121,4 @@ def web():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port='5001', debug=True)
